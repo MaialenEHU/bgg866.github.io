@@ -1,0 +1,136 @@
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+	<script src="https://openlayers.org/en/v4.6.5/build/ol.js">
+	</script>
+	<link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+	
+
+	<style>
+	.mibloque {
+		width:90%;
+		height:800px;
+		box-shadow: 10px 10px 10px rgb(155,155,155);
+		}
+
+	.ol-mouse-position {
+		font-size:18px;
+		font-family: Arial black;
+		top:5px;
+		right:5px;
+		position:absolute;
+		color: red;
+	}
+	.ol-scale-line {
+		position:absolute;
+		bottom: 25px;
+		left:300px;
+		background:blue;
+		padding:5px;
+	}
+	</style>
+
+</head>
+<body>
+	<h1>Tema8_1. Openlayers.html</h1>
+	<div id="mibloquemapa" class="mibloque"></div>
+
+	<script type="text/javascript">
+			
+
+var CapaBase= new ol.layer.Tile ({source: new ol.source.OSM()}); 
+
+var fuente1 = new ol.source.Vector ({format: new ol.format.GeoJSON(),
+url:"http://localhost:8080/geoserver/www/Tema8/AU_Tolosa.geojson"});
+var fuente2 = new ol.source.Vector ({format: new ol.format.GeoJSON(),
+url:'http://localhost:8080/geoserver/www/Tema8/BU_Tolosa.geojson' });
+var fuente3 = new ol.source.Vector ({format: new ol.format.GeoJSON(),
+url:'http://localhost:8080/geoserver/www/Tema8/RN_Tolosa.geojson'});
+var fuente4 = new ol.source.Vector ({format: new ol.format.GeoJSON(),
+url:'http://localhost:8080/geoserver/www/Tema8/HY_Tolosa.geojson', });
+var CapaBaseStamen= new ol.layer.Tile ({ source: new ol.source.Stamen({layer: 'toner'})}); 
+var CapaBaseBing= new ol.layer.Tile ({ source: new ol.source.BingMaps({key: 'AkGbxXx6tDWf1swlhPJyoAVp06H0s0gDTYslNWWHZ6RoPqMpB9ld5FY1WutX8UoF', imagerySet:'Road'})}); 
+var MapaRasterIGN= new ol.layer.Image ({ source: new ol.source.ImageWMS({url: 'http://www.ign.es/wms-inspire/mapa-raster', params: {LAYERS:'mtn_rasterizado'},}) }); 
+var MapaPNOA= new ol.layer.Image ({ source: new ol.source.ImageWMS({url: 'http://www.ign.es/wms-inspire/pnoa-ma', params: {LAYERS:'OI.OrthoimageCoverage'},})}); 
+
+var estilo_AU = [
+	new ol.style.Style({
+		stroke:new ol.style.Stroke({
+			color:'black',
+			width:3}),
+	})];
+
+var estilo_BU = [
+	new ol.style.Style({
+		stroke:new ol.style.Stroke({
+			color:'grey',
+			width:3}),
+	})];
+
+var estilo_HY = [
+	new ol.style.Style({
+		stroke:new ol.style.Stroke({
+			color:'blue',
+			width:5}),
+	})];
+
+
+var estilo_RN = [
+	new ol.style.Style({
+		stroke:new ol.style.Stroke({
+			color:'red',
+			width:5}),
+	})];
+
+
+var AU_Tolosa = new ol.layer.Vector({
+	title: "Municipio",
+	source:fuente1,
+	projection: "EPSG:4326",
+	style:estilo_AU,
+	opacity:0.00,
+});
+
+var BU_Tolosa= new ol.layer.Vector({
+	title: "Edificios",
+	source: fuente2,
+	projection: "EPSG:4326",
+	style:estilo_BU
+});
+
+var RN_Tolosa = new ol.layer.Vector({
+	title: "Carreteras",
+	source:fuente3,
+	projection: "EPSG:4326",
+	style:estilo_RN,
+});
+
+var HY_Tolosa = new ol.layer.Vector({
+	title: "Hidrografía",
+	source:fuente4,
+	projection: "EPSG:4326",
+	style:estilo_HY,
+});
+
+
+
+var lavista = new ol.View({center:ol.proj.fromLonLat([-2.0739, 43.137]), zoom: 16});
+
+var controles= ol.control.defaults().extend([
+	new ol.control.FullScreen(),
+	new ol.control.ZoomSlider(),
+	new ol.control.ScaleLine(),
+	new ol.control.ZoomToExtent(),
+	new ol.control.MousePosition({projection:'EPSG:4326', coordinateFormat:function(coordinate) {return ol.coordinate.format(coordinate,'{y},{x}', 6);}
+}),]);
+
+
+var mimapa= new ol.Map({
+	target: "mibloquemapa",
+	layers: [MapaPNOA, AU_Tolosa, BU_Tolosa, HY_Tolosa, RN_Tolosa],
+	view: lavista,
+	controls:controles,
+});
+</script>
+</body>
+</html>
