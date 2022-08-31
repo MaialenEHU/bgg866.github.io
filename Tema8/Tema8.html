@@ -1,0 +1,71 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js">
+    </script>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    
+
+<script type="text/javascript" src="AU_Tolosa.js"></script>
+<script type="text/javascript" src="BU_Tolosa.js"></script>
+<script type="text/javascript" src="HY_Tolosa.js"></script>
+<script type="text/javascript" src="RN_Tolosa.js"></script>
+<style>
+#zona_reservada_map {
+width: 100%;
+height: 600px;
+box-shadow: 5px 5px 5px #777;
+}
+<!-- Cargamos las variables de la geometria geoJSON recordad las variables asociadas
+municipio, concejos, concejosuperficial y mojones-->
+</style>
+</head>
+<body>
+<h1> Tema 8_1. Publicación de Mapas Web</h1>
+<div id="zona_reservada_map"></div>
+<script>
+// ESTILOS:
+var estilo_edif={
+        'color':"grey",
+        'weight':2,
+};
+var estilo_hidro={
+        'color':"blue",
+        'weight':2,
+};
+var estilo_carretera={
+        'color':"red",
+        'weight':2,
+};
+//
+
+
+var MapaPNOA= new ol.layer.Image ({ source: new ol.source.ImageWMS({url: 'http://www.ign.es/wms-inspire/pnoa-ma', params: {LAYERS:'OI.OrthoimageCoverage'},})}); 
+// LAYERS:
+var capa_municipio=L.geoJSON(AU_Tolosa);
+var capa_edificio=L.geoJSON(BU_Tolosa,{style: estilo_edif});
+var capa_hidrografia=L.geoJSON(HY_Tolosa,{style:estilo_hidro});
+var capa_carretera=L.geoJSON(RN_Tolosa,{style:estilo_carretera});
+
+
+var mapasbase={"OpenStreetMap":CapaBASE};
+var superpuestos ={
+"Municipio":capa_municipio,
+"Edificios":capa_edificio,
+"Hidrografía":capa_hidrografia,
+"Carretera": capa_carretera,
+};
+
+
+// CONTROLES:
+var mapa = L.map('zona_reservada_map', {
+center: [43.137, -2.07391], // Primero latitud y luego longitud
+zoom: 15,
+layers: [mapaPNOA, capa_municipio, capa_edificio, capa_hidrografia, capa_carretera] // Solo incorporo dos capas por defecto de las superpuestas.
+});
+
+L.control.scale().addTo(mapa);
+
+L.control.layers(mapaPNOA,superpuestos,{collapsed:false}).addTo(mapa);
+</script>
+</body>
